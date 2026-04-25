@@ -15,6 +15,7 @@ interface ChatState {
   currentSessionId: number | null
   messages: Record<number, Array<{
     id: number
+    sessionId: number
     role: 'user' | 'assistant'
     content: string
     createTime: string
@@ -83,6 +84,7 @@ export const useChatStore = defineStore('chat', {
     },
     setMessages(sessionId: number, messages: Array<{
       id: number
+      sessionId: number
       role: 'user' | 'assistant'
       content: string
       createTime: string
@@ -91,6 +93,7 @@ export const useChatStore = defineStore('chat', {
     },
     addMessage(sessionId: number, message: {
       id: number
+      sessionId: number
       role: 'user' | 'assistant'
       content: string
       createTime: string

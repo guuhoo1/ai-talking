@@ -37,3 +37,21 @@ export interface ChatResponse {
   content: string
   done: boolean
 }
+
+export interface Knowledge {
+  id: number
+  title: string
+  summary: string
+  coreCode: string
+  techTags: string
+  scene: string
+  principle: string
+  notes: string
+  reusable: boolean
+  sourceMessageId: number
+  createTime: string
+}
+
+export interface KnowledgeRequest {
+  messageId: number
+}

@@ -20,3 +20,11 @@ export const chatApi = {
         return new EventSource(`http://localhost:8080/api/chat/send?sessionId=${data.sessionId}&content=${encodeURIComponent(data.content)}&model=${data.model}&token=${encodeURIComponent(token)}`)
     }
 }
+
+export const knowledgeApi = {
+  extractKnowledge: (messageId: number) => request.post('/knowledge/extract', { messageId }),
+  getKnowledgeById: (id: number) => request.get(`/knowledge/${id}`),
+  getAllKnowledge: () => request.get('/knowledge/all'),
+  getKnowledgeByTechTag: (tag: string) => request.get(`/knowledge/by-tag/${tag}`),
+  deleteKnowledge: (id: number) => request.delete(`/knowledge/${id}`)
+}

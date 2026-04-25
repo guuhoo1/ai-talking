@@ -7,6 +7,9 @@
           <h2>{{ currentSessionTitle }}</h2>
         </div>
         <div class="header-right">
+          <router-link to="/knowledge" class="knowledge-link">
+            知识库
+          </router-link>
           <a-select v-model:value="selectedModel" class="model-select">
             <a-option value="qwen2.5:3b">Qwen2.5:3b</a-option>
             <a-option value="llama3">Llama3</a-option>
@@ -26,7 +29,9 @@
               </svg>
             </div>
             <div class="message-content">
-              <div class="message-text" v-html="renderedStreamContent"></div>
+              <div class="message-text">
+                <MarkdownRender :content="renderedStreamContent" />
+              </div>
             </div>
           </div>
         </div>
@@ -55,7 +60,28 @@ import { chatApi } from '../api'
 import { useChatStore } from '../store'
 import ChatSessionList from '../components/ChatSessionList.vue'
 import ChatMessage from '../components/ChatMessage.vue'
-import { marked } from 'marked'
+import MarkdownRender from 'markstream-vue'
+import 'markstream-vue/index.css'
+
+// 复制代码到剪贴板
+window.copyCode = (button: HTMLElement) => {
+  const codeBlock = button.closest('.code-block') as HTMLElement
+  const codeElement = codeBlock.querySelector('code') as HTMLElement
+  const code = codeElement.textContent || ''
+  
+  navigator.clipboard.writeText(code).then(() => {
+    const originalText = button.textContent
+    button.textContent = '已复制!'
+    button.classList.add('copied')
+    
+    setTimeout(() => {
+      button.textContent = originalText
+      button.classList.remove('copied')
+    }, 2000)
+  }).catch(err => {
+    console.error('复制失败:', err)
+  })
+}
 
 const chatStore = useChatStore()
 const messagesContainer = ref<HTMLElement>()
@@ -81,7 +107,7 @@ const currentSessionTitle = computed(() => {
 })
 
 const renderedStreamContent = computed(() => {
-  return marked(currentStreamMessage.value)
+  return currentStreamMessage.value
 })
 
 const handleSendMessage = () => {
@@ -226,6 +252,23 @@ onMounted(() => {
   gap: 16px;
 }
 
+.knowledge-link {
+  padding: 8px 16px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  color: var(--text-primary);
+  font-size: 14px;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.knowledge-link:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background: rgba(67, 97, 238, 0.05);
+}
+
 .model-select {
   width: 140px;
   border-radius: var(--border-radius-md);
@@ -241,7 +284,7 @@ onMounted(() => {
 }
 
 .messages-wrapper {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
 }
 
@@ -274,7 +317,7 @@ onMounted(() => {
 }
 
 .input-wrapper {
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
   gap: 12px;
@@ -353,5 +396,99 @@ onMounted(() => {
 :deep(.ant-select-open .ant-select-selector) {
   border-color: var(--primary-color) !important;
   box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1) !important;
+}
+
+/* 代码块样式 */
+:deep(.code-block) {
+  margin: 16px 0;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  background-color: #f6f8fa;
+  border: 1px solid #e1e4e8;
+}
+
+:deep(.code-header) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #f1f3f4;
+  border-bottom: 1px solid #e1e4e8;
+  font-size: 12px;
+}
+
+:deep(.code-language) {
+  color: #57606a;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+}
+
+:deep(.copy-button) {
+  background: none;
+  border: none;
+  color: #57606a;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: var(--border-radius-sm);
+  transition: all 0.3s ease;
+}
+
+:deep(.copy-button:hover) {
+  background-color: rgba(175, 184, 193, 0.2);
+  color: #0969da;
+}
+
+:deep(.copy-button.copied) {
+  color: #1f883d;
+}
+
+:deep(.code-block pre) {
+  margin: 0;
+  padding: 16px;
+  overflow-x: auto;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+:deep(.code-block code) {
+  background: none;
+  padding: 0;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 14px;
+}
+
+/* 语法高亮样式 */
+:deep(.keyword) {
+  color: #d73a49;
+  font-weight: 600;
+}
+
+:deep(.string) {
+  color: #032f62;
+}
+
+:deep(.comment) {
+  color: #6a737d;
+  font-style: italic;
+}
+
+:deep(.number) {
+  color: #005cc5;
+}
+
+/* 单行代码样式 */
+:deep(pre code) {
+  display: block;
+}
+
+:deep(code) {
+  background-color: #f1f3f4;
+  padding: 2px 4px;
+  border-radius: 3px;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  font-size: 0.9em;
+  color: #005cc5;
 }
 </style>

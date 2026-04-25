@@ -9,12 +9,13 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.13",
-    "vue-router": "^4.4.5",
-    "pinia": "^2.2.6",
-    "axios": "^1.7.9",
     "ant-design-vue": "^4.2.5",
-    "marked": "^15.0.12"
+    "axios": "^1.7.9",
+    "markstream-vue": "0.0.13-beta.7",
+    "pinia": "^2.2.6",
+    "shiki": "^4.0.2",
+    "vue": "^3.5.13",
+    "vue-router": "^4.4.5"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
