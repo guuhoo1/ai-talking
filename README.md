@@ -78,6 +78,10 @@ docker-compose up -d
 - 流式响应（实时显示AI回复）
 - 会话历史记录
 - 用户认证系统
+- 知识库管理
+  - 知识提炼（从对话中提取关键语句和代码片段）
+  - 知识卡片展示（弹窗形式）
+  - 知识删除功能
 
 ## API文档
 
@@ -93,6 +97,13 @@ docker-compose up -d
 - `DELETE /api/chat/session/{id}` - 删除会话
 - `GET /api/chat/message/{sessionId}` - 获取会话消息
 - `GET /api/chat/send` - 发送消息（流式响应）
+
+### 知识库相关
+- `POST /api/knowledge/extract` - 提炼知识
+- `GET /api/knowledge/{id}` - 获取知识详情
+- `GET /api/knowledge/all` - 获取所有知识
+- `GET /api/knowledge/by-tag/{tag}` - 按技术标签获取知识
+- `DELETE /api/knowledge/{id}` - 删除知识
 
 ## 项目配置
 
