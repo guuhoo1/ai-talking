@@ -1,7 +1,7 @@
 <template>
   <div class="message-container" :class="{ 'user-message': message.role === 'user' }">
     <div class="message-avatar">
-      {{ message.role === 'user' ? '👤' : '🤖' }}
+      {{ message.role === 'user' ? '👤' : '💬' }}
     </div>
     <div class="message-content">
       <div class="message-text" v-html="renderedContent"></div>
@@ -32,8 +32,20 @@ const formatTime = (time: string) => {
 <style scoped>
 .message-container {
   display: flex;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-m);
   align-items: flex-start;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .user-message {
@@ -41,9 +53,18 @@ const formatTime = (time: string) => {
 }
 
 .message-avatar {
-  font-size: 24px;
-  margin: 0 12px;
+  font-size: 20px;
+  margin: 0 var(--spacing-m);
   flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--border-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .message-content {
@@ -55,52 +76,61 @@ const formatTime = (time: string) => {
 }
 
 .message-text {
-  padding: 12px 16px;
-  border-radius: 16px;
-  background: #f0f0f0;
+  padding: var(--spacing-m);
+  border-radius: var(--border-radius-lg);
+  background: var(--bg-color);
   line-height: 1.5;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
 }
 
 .user-message .message-text {
-  background: #007bff;
-  color: #fff;
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
 }
 
 .message-time {
   font-size: 12px;
-  color: #999;
-  margin-top: 4px;
+  color: var(--text-muted);
+  margin-top: var(--spacing-xs);
 }
 
 /* Markdown 样式 */
 :deep(p) {
-  margin: 8px 0;
+  margin: var(--spacing-s) 0;
+  color: var(--text-primary);
 }
 
 :deep(code) {
-  background: #f5f5f5;
+  background: rgba(0, 0, 0, 0.05);
   padding: 2px 4px;
-  border-radius: 4px;
+  border-radius: var(--border-radius-sm);
   font-family: 'Courier New', Courier, monospace;
+  font-size: 12px;
+  color: var(--text-primary);
 }
 
 :deep(pre) {
-  background: #f5f5f5;
-  padding: 12px;
-  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.05);
+  padding: var(--spacing-m);
+  border-radius: var(--border-radius-md);
   overflow-x: auto;
-  margin: 8px 0;
+  margin: var(--spacing-s) 0;
+  border: 1px solid var(--border-color);
 }
 
 :deep(pre code) {
   background: none;
   padding: 0;
+  color: var(--text-primary);
 }
 
 :deep(blockquote) {
-  border-left: 4px solid #007bff;
-  padding-left: 12px;
-  margin: 8px 0;
-  color: #666;
+  border-left: 4px solid var(--primary-color);
+  padding-left: var(--spacing-m);
+  margin: var(--spacing-s) 0;
+  color: var(--text-secondary);
 }
 </style>

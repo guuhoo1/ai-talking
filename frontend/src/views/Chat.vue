@@ -3,29 +3,47 @@
     <ChatSessionList />
     <div class="chat-main">
       <div class="chat-header">
-        <h2>{{ currentSessionTitle }}</h2>
-        <a-select v-model:value="selectedModel" style="width: 120px">
-          <a-option value="qwen2.5:3b">Qwen2.5:3b</a-option>
-          <a-option value="llama3">Llama3</a-option>
-          <a-option value="mistral">Mistral</a-option>
-        </a-select>
+        <div class="header-left">
+          <h2>{{ currentSessionTitle }}</h2>
+        </div>
+        <div class="header-right">
+          <a-select v-model:value="selectedModel" class="model-select">
+            <a-option value="qwen2.5:3b">Qwen2.5:3b</a-option>
+            <a-option value="llama3">Llama3</a-option>
+            <a-option value="mistral">Mistral</a-option>
+          </a-select>
+        </div>
       </div>
       <div class="chat-messages" ref="messagesContainer">
-        <ChatMessage v-for="message in currentMessages" :key="message.id" :message="message" />
-        <div v-if="isStreaming" class="message-container">
-          <div class="message-avatar">🤖</div>
-          <div class="message-content">
-            <div class="message-text" v-html="renderedStreamContent"></div>
+        <div class="messages-wrapper">
+          <ChatMessage v-for="message in currentMessages" :key="message.id" :message="message" />
+          <div v-if="isStreaming" class="message-container">
+            <div class="message-avatar">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M21 15C21 15.5523 20.5523 16 20 16H19V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V16H4C3.44772 16 3 15.5523 3 15V9C3 8.44772 3.44772 8 4 8H5V5C5 3.89543 5.89543 3 7 3H17C18.1046 3 19 3.89543 19 5V8H20C20.5523 8 21 8.44772 21 9V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 11H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 14H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="message-content">
+              <div class="message-text" v-html="renderedStreamContent"></div>
+            </div>
           </div>
         </div>
       </div>
       <div class="chat-input">
-        <a-textarea v-model:value="inputMessage" placeholder="输入消息..." :disabled="isStreaming"
-          @keyup.enter.exact="handleSendMessage" />
-        <a-button type="primary" @click="handleSendMessage"
-          :disabled="!inputMessage || !currentSessionId || isStreaming">
-          发送
-        </a-button>
+        <div class="input-wrapper">
+          <a-textarea v-model:value="inputMessage" placeholder="输入消息..." :disabled="isStreaming"
+            @keyup.enter.exact="handleSendMessage" class="message-input" />
+          <a-button type="primary" @click="handleSendMessage"
+            :disabled="!inputMessage || !currentSessionId || isStreaming" class="send-button">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            发送
+          </a-button>
+        </div>
       </div>
     </div>
   </div>
@@ -169,51 +187,171 @@ onMounted(() => {
 .chat-container {
   display: flex;
   height: 100vh;
+  background: var(--bg-color);
+  overflow: hidden;
 }
 
 .chat-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: #fff;
+  background: var(--card-color);
+  box-shadow: var(--shadow-md);
+  border-left: 1px solid var(--border-color);
 }
 
 .chat-header {
   padding: 16px 24px;
-  border-bottom: 1px solid #e8e8e8;
+  border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
   align-items: center;
+  background: var(--card-color);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
-.chat-header h2 {
+.header-left h2 {
   margin: 0;
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 600;
+  color: var(--text-primary);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.model-select {
+  width: 140px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--border-color);
+  font-size: 14px;
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
   padding: 24px;
-  background: #fafafa;
+  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.messages-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.chat-messages::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+.chat-messages::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 .chat-input {
-  padding: 16px 24px;
-  border-top: 1px solid #e8e8e8;
-  display: flex;
-  gap: 12px;
-  background: #fff;
+  padding: 20px 24px;
+  border-top: 1px solid var(--border-color);
+  background: var(--card-color);
+  position: sticky;
+  bottom: 0;
+  z-index: 10;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
 
-.chat-input textarea {
+.input-wrapper {
+  max-width: 800px;
+  margin: 0 auto;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.message-input {
   flex: 1;
   resize: none;
   min-height: 80px;
+  max-height: 200px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-md);
+  padding: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+  background: var(--card-color);
+  color: var(--text-primary);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
-.chat-input button {
-  align-self: flex-end;
+.message-input::placeholder {
+  color: var(--text-muted);
+}
+
+.message-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+}
+
+.send-button {
+  padding: 12px 24px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  white-space: nowrap;
+}
+
+.send-button:hover {
+  background: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+}
+
+.send-button:active {
+  transform: translateY(0);
+}
+
+.send-button:disabled {
+  background: var(--text-muted);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+:deep(.ant-select-selector) {
+  border-radius: var(--border-radius-md) !important;
+  border: 1px solid var(--border-color) !important;
+}
+
+:deep(.ant-select-selector:hover) {
+  border-color: var(--primary-color) !important;
+}
+
+:deep(.ant-select-open .ant-select-selector) {
+  border-color: var(--primary-color) !important;
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1) !important;
 }
 </style>

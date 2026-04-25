@@ -1,0 +1,44 @@
+:root {
+  /* 主题颜色 */
+  --primary-color: #4361ee;
+  --secondary-color: #3a0ca3;
+  
+  /* 中性色 */
+  --bg-color: #f8f9fa;
+  --card-color: #ffffff;
+  --border-color: #e9ecef;
+  
+  /* 文本颜色 */
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #adb5bd;
+  
+  /* 间距 */
+  --spacing-xs: 4px;
+  --spacing-s: 8px;
+  --spacing-m: 16px;
+  --spacing-l: 24px;
+  --spacing-xl: 32px;
+  --spacing-xxl: 48px;
+  
+  /* 阴影 */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  
+  /* 圆角 */
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 12px;
+  --border-radius-full: 50%;
+  
+  /* GPT风格颜色 */
+  --gpt-bg: #202123;
+  --gpt-sidebar-bg: #111827;
+  --gpt-card-bg: #343541;
+  --gpt-border-color: #3e3f4b;
+  --gpt-text-primary: #e5e7eb;
+  --gpt-text-secondary: #9ca3af;
+  --gpt-hover-bg: #2a2b32;
+  --gpt-active-bg: #343541;
+}
