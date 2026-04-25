@@ -140,9 +140,9 @@ public class OllamaService {
                             }
                     );
 
-            // 等待响应完成，最多40秒（根据实际情况调整）
-            logger.info("等待AI响应，最多40秒");
-            boolean completed = latch.await(40, java.util.concurrent.TimeUnit.SECONDS);
+            // 等待响应完成，最多120秒（根据实际情况调整）
+            logger.info("等待AI响应，最多120秒");
+            boolean completed = latch.await(120, java.util.concurrent.TimeUnit.SECONDS);
             if (!completed) {
                 logger.error("AI响应超时");
                 throw new Exception("AI response timed out");
