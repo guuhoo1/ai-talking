@@ -1,0 +1,51 @@
+spring:
+  profiles:
+    active: dev
+  datasource:
+    username: root
+    password: 123456
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai_chatbot?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+
+ollama:
+  base-url: http://localhost:11434/api
+  default-model: qwen2.5:3b
+
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+  datasource:
+    url: jdbc:mysql://mysql:3306/ai_chatbot?useUnicode=true&characterEncoding=utf-8&serverTimezone=UTC
+
+ollama:
+  base-url: http://ollama:11434/api
+  default-model: llama3
+
+---
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.aitalking.model
+  configuration:
+    map-underscore-to-camel-case: true
+
+sa-token:
+  token-name: token
+  timeout: 86400
+  active-timeout: -1
+  is-concurrent: true
+  is-share: true
+  token-style: uuid
+  is-log: false
+  is-read-header: true
+  token-prefix: 
+  is-read-body: false
+  is-read-param: true

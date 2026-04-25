@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aitalking.mapper.ChatSessionMapper">
+    <select id="selectByUserId" resultType="com.aitalking.model.ChatSession">
+        SELECT * FROM chat_session WHERE user_id = #{userId} ORDER BY create_time DESC
+    </select>
+
+    <insert id="insert" parameterType="com.aitalking.model.ChatSession" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO chat_session (user_id, title, create_time) VALUES (#{userId}, #{title}, NOW())
+    </insert>
+
+    <delete id="deleteById">
+        DELETE FROM chat_session WHERE id = #{id} AND user_id = #{userId}
+    </delete>
+
+    <select id="selectById" resultType="com.aitalking.model.ChatSession">
+        SELECT * FROM chat_session WHERE id = #{id}
+    </select>
+</mapper>

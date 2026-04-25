@@ -1,0 +1,67 @@
+# 前端项目忽略文件
+/frontend/node_modules
+*.local
+
+# 后端项目忽略文件
+/backend/target/
+*.class
+*.log
+
+# IDE相关文件
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# 环境变量文件
+.env
+.env.local
+.env.*.local
+
+# 构建产物
+/build
+/out
+
+# 临时文件
+*.tmp
+*.temp
+
+# 操作系统文件
+Thumbs.db
+.DS_Store
+
+# 数据库文件
+*.db
+*.sqlite
+
+# 日志文件
+logs/
+*.log
+
+# 测试报告
+coverage/
+.nyc_output/
+
+# 包管理文件
+package-lock.json
+pnpm-lock.yaml
+yarn.lock
+
+# 其他
+*.swp
+*.swo
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# trae 相关文件
+.trae
+
+# docker 相关文件
+docker-compose.yml
+docker-compose.override.yml
+/frontend/Dockerfile
+/backend/Dockerfile

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.aitalking.mapper.UserMapper">
+    <select id="selectByUsername" resultType="com.aitalking.model.User">
+        SELECT * FROM users WHERE username = #{username}
+    </select>
+
+    <insert id="insert" parameterType="com.aitalking.model.User">
+        INSERT INTO users (username, password, create_time) VALUES (#{username}, #{password}, NOW())
+    </insert>
+
+    <select id="selectById" resultType="com.aitalking.model.User">
+        SELECT * FROM users WHERE id = #{id}
+    </select>
+</mapper>
