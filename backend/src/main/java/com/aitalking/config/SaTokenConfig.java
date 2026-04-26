@@ -8,25 +8,44 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+/**
+ * Sa-Token认证配置
+ * <p>
+ * 配置Sa-Token认证拦截器，实现基于token的登录验证功能。
+     * 拦截所有/api/**路径的请求，排除登录和注册接口。
+     * 对于特定的聊天发送接口，支持从查询参数中读取token进行认证。
+ *
+ * @author AI Talking
+ * @date 2026-04-26
+ */
 @Configuration
 public class SaTokenConfig implements WebMvcConfigurer {
+
+    /**
+     * 添加Sa-Token认证拦截器
+     * <p>
+     * 配置认证拦截器的行为：
+     * <ul>
+     *   <li>拦截所有/api/**路径的请求</li>
+     *   <li>排除/api/auth/login和/api/auth/register路径，无需认证即可访问</li>
+     *   <li>对于/api/chat/send路径，支持从查询参数中获取token</li>
+     *   <li>其他路径的请求必须携带有效的登录token</li>
+     * </ul>
+     *
+     * @param registry 拦截器注册表，用于添加Sa-Token拦截器
+     */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        // 添加Sa-Token的拦截器
         registry.addInterceptor(new SaInterceptor(handler -> {
-            // 获取当前请求路径
             String path = SaHolder.getRequest().getRequestPath();
 
-            // 对于/api/chat/send路径，从查询参数中读取token
             if (path.equals("/api/chat/send")) {
                 String token = SaHolder.getRequest().getParam("token");
                 if (SaFoxUtil.isNotEmpty(token)) {
-                    // 手动设置token
                     StpUtil.setTokenValue(token);
                 }
             }
 
-            // 检查登录状态
             StpUtil.checkLogin();
         })).addPathPatterns("/api/**").excludePathPatterns("/api/auth/login", "/api/auth/register");
     }

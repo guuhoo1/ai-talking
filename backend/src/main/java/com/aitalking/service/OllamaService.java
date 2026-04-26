@@ -14,6 +14,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Ollama AI服务类
+ * 提供与Ollama AI模型的交互功能，包括聊天和文本生成
+ * 支持SSE实时流式响应和同步阻塞式响应两种模式
+ *
+ * @author AI Talking
+ * @date 2026-04-26
+ */
 @Service
 public class OllamaService {
 
@@ -31,25 +39,30 @@ public class OllamaService {
         this.ollamaClient = new OllamaClient(baseUrl);
     }
 
+    /**
+     * 聊天功能（流式响应）
+     * 通过SSE实时流式返回AI响应，适用于前端需要实时展示打字效果的场景
+     * 获取会话历史消息作为上下文，异步处理AI响应并实时推送
+     *
+     * @param sessionId 会话ID，用于获取历史消息上下文
+     * @param content 用户输入的消息内容
+     * @param model 使用的AI模型名称，如果为null或空则使用默认模型
+     * @return SseEmitter对象，用于SSE实时通信，超时时间5分钟
+     */
     public SseEmitter chat(Long sessionId, String content, String model) {
-        SseEmitter emitter = new SseEmitter(300000L); // 5分钟超时
+        SseEmitter emitter = new SseEmitter(300000L);
 
-        // 使用默认模型如果未指定
         final String finalModel = (model == null || model.isEmpty()) ? defaultModel : model;
 
-        // 获取会话历史
         final List<Map<String, String>> messages = new ArrayList<>();
         messages.add(Map.of("role", "system", "content", "You are a helpful assistant."));
 
-        // 添加历史消息
         chatService.getMessages(sessionId).forEach(msg -> {
             messages.add(Map.of("role", msg.getRole(), "content", msg.getContent()));
         });
 
-        // 添加当前用户消息
         messages.add(Map.of("role", "user", "content", content));
 
-        // 异步处理AI响应
         new Thread(() -> {
             try {
                 StringBuilder assistantResponse = new StringBuilder();
@@ -61,13 +74,10 @@ public class OllamaService {
                                         if (node.has("message") && node.get("message").has("content")) {
                                             String chunk = node.get("message").get("content").asText();
                                             assistantResponse.append(chunk);
-                                            // 发送SSE事件
                                             emitter.send(SseEmitter.event().data(chunk));
                                         }
                                         if (node.has("done") && node.get("done").asBoolean()) {
-                                            // 保存AI响应
                                             chatService.saveMessageWithoutValidation(sessionId, "assistant", assistantResponse.toString());
-                                            // 发送结束事件
                                             emitter.send(SseEmitter.event().data("[DONE]"));
                                             emitter.complete();
                                         }
@@ -79,7 +89,6 @@ public class OllamaService {
                                     emitter.completeWithError(error);
                                 },
                                 () -> {
-                                    // 流结束
                                 }
                         );
             } catch (Exception e) {
@@ -90,26 +99,30 @@ public class OllamaService {
         return emitter;
     }
 
+    /**
+     * 文本生成功能（同步阻塞式响应）
+     * 同步调用AI模型生成文本响应，适用于不需要实时流式输出的场景
+     * 使用默认模型，等待AI完整响应后返回
+     *
+     * @param prompt 输入的提示词或问题
+     * @return AI生成的完整文本响应
+     * @throws RuntimeException 如果AI响应超时、发生错误或返回空响应
+     */
     public String generate(String prompt) {
         logger.info("开始生成AI响应，使用模型: {}", defaultModel);
-        // 使用默认模型
         final String finalModel = defaultModel;
 
-        // 构建消息列表
         final List<Map<String, String>> messages = new ArrayList<>();
         messages.add(Map.of("role", "system", "content", "You are a helpful assistant."));
         messages.add(Map.of("role", "user", "content", prompt));
 
-        // 同步处理AI响应
         StringBuilder responseBuilder = new StringBuilder();
         try {
-            // 使用CountDownLatch等待响应完成
             java.util.concurrent.CountDownLatch latch = new java.util.concurrent.CountDownLatch(1);
             java.util.concurrent.atomic.AtomicReference<Exception> errorRef = new java.util.concurrent.atomic.AtomicReference<>();
 
 
             logger.info("发送请求到Ollama API");
-//            打印内容
             logger.info("请求内容-> {}",messages);
             ollamaClient.chat(finalModel, messages)
                     .subscribe(
@@ -136,11 +149,9 @@ public class OllamaService {
                                 latch.countDown();
                             },
                             () -> {
-                                // 流结束
                             }
                     );
 
-            // 等待响应完成，最多120秒（根据实际情况调整）
             logger.info("等待AI响应，最多120秒");
             boolean completed = latch.await(120, java.util.concurrent.TimeUnit.SECONDS);
             if (!completed) {
@@ -148,13 +159,11 @@ public class OllamaService {
                 throw new Exception("AI response timed out");
             }
 
-            // 检查是否有错误
             if (errorRef.get() != null) {
                 logger.error("AI响应发生错误: {}", errorRef.get().getMessage());
                 throw errorRef.get();
             }
 
-            // 检查响应是否为空
             if (responseBuilder.length() == 0) {
                 logger.error("AI返回空响应");
                 throw new Exception("AI returned empty response");

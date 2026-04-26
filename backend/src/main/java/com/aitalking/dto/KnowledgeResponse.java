@@ -2,20 +2,68 @@ package com.aitalking.dto;
 
 import java.util.Date;
 
+/**
+ * 知识库响应类，用于封装知识库条目的完整信息。
+ *
+ * @author AI Talking
+ * @date 2026-04-26
+ */
 public class KnowledgeResponse {
+    /**
+     * 知识库条目的唯一标识ID
+     */
     private Long id;
+
+    /**
+     * 知识条目的标题
+     */
     private String title;
+
+    /**
+     * 知识条目的摘要描述
+     */
     private String summary;
+
+    /**
+     * 核心代码片段
+     */
     private String coreCode;
+
+    /**
+     * 技术标签，多个标签用逗号分隔
+     */
     private String techTags;
+
+    /**
+     * 使用场景描述
+     */
     private String scene;
+
+    /**
+     * 技术原理说明
+     */
     private String principle;
+
+    /**
+     * 注意事项或备注信息
+     */
     private String notes;
+
+    /**
+     * 标识该知识是否可复用
+     */
     private Boolean reusable;
+
+    /**
+     * 来源消息的ID
+     */
     private Long sourceMessageId;
+
+    /**
+     * 知识条目的创建时间
+     */
     private Date createTime;
 
-    // Getters and Setters
     public Long getId() {
         return id;
     }

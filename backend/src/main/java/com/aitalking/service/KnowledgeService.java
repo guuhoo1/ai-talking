@@ -16,6 +16,14 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * 知识库服务类
+ * 提供AI对话知识的提取、存储、查询和管理功能
+ * 通过AI模型从用户与助手的对话中提炼关键知识点
+ *
+ * @author AI Talking
+ * @date 2026-04-26
+ */
 @Service
 public class KnowledgeService {
 
@@ -33,17 +41,24 @@ public class KnowledgeService {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * 从AI对话消息中提取知识
+     * 根据指定的消息ID，获取对应的助手消息和用户消息，
+     * 调用AI模型提炼关键知识点并存储到知识库
+     *
+     * @param messageId 助手消息ID，用于定位对话上下文
+     * @return 提取的知识卡片响应对象
+     * @throws Exception 如果消息无效、未找到用户消息、AI处理失败或数据库保存失败
+     */
     public KnowledgeResponse extractKnowledge(Long messageId) throws Exception {
         logger.info("开始提取知识库，消息ID: {}", messageId);
         try {
-            // 获取当前assistant消息
             ChatMessage assistantMessage = messageMapper.selectById(messageId);
             if (assistantMessage == null || !"assistant".equals(assistantMessage.getRole())) {
                 logger.warn("无效的消息ID或非assistant消息: {}", messageId);
                 throw new Exception("Invalid message ID or not an assistant message");
             }
 
-            // 获取上一条user消息
             java.util.Map<String, Object> params = new java.util.HashMap<>();
             params.put("sessionId", assistantMessage.getSessionId());
             params.put("createTime", assistantMessage.getCreateTime());
@@ -54,28 +69,23 @@ public class KnowledgeService {
             }
 
             logger.info("获取到用户消息和助手消息，开始构建提示词");
-            // 构建AI提示
             String prompt = buildPrompt(userMessage.getContent(), assistantMessage.getContent());
 
-            // 调用AI进行总结
             logger.info("调用AI模型进行知识提炼");
             String aiResponse = ollamaService.generate(prompt);
             logger.info("AI响应获取成功，开始解析");
 
-            // 解析AI响应
             JsonNode aiResponseNode = objectMapper.readTree(aiResponse);
             if (!aiResponseNode.has("valid") || !aiResponseNode.get("valid").asBoolean()) {
                 logger.warn("AI提炼失败: {}", aiResponse);
                 throw new Exception("AI failed to extract knowledge");
             }
 
-            // 验证必要字段
             if (!aiResponseNode.has("title") || !aiResponseNode.has("summary") || !aiResponseNode.has("tech_tags") || !aiResponseNode.has("reusable")) {
                 logger.warn("AI响应缺少必要字段: {}", aiResponse);
                 throw new Exception("AI response missing required fields");
             }
 
-            // 创建知识卡片
             AiKnowledge knowledge = new AiKnowledge();
             knowledge.setTitle(aiResponseNode.get("title").asText());
             knowledge.setSummary(aiResponseNode.get("summary").asText());
@@ -90,7 +100,6 @@ public class KnowledgeService {
 
             logger.info("知识卡片创建成功，标题: {}", knowledge.getTitle());
 
-            // 保存到数据库
             int insertResult = knowledgeMapper.insert(knowledge);
             if (insertResult != 1) {
                 logger.error("保存知识卡片失败，影响行数: {}", insertResult);
@@ -99,7 +108,6 @@ public class KnowledgeService {
 
             logger.info("知识卡片保存成功，ID: {}", knowledge.getId());
 
-            // 转换为响应对象
             KnowledgeResponse response = new KnowledgeResponse();
             BeanUtils.copyProperties(knowledge, response);
 
@@ -107,11 +115,17 @@ public class KnowledgeService {
             return response;
         } catch (Exception e) {
             logger.error("提取知识库时发生错误: {}", e.getMessage(), e);
-            // 重新抛出异常，确保上层能够捕获
             throw new Exception("Error extracting knowledge: " + e.getMessage(), e);
         }
     }
 
+    /**
+     * 根据ID获取知识卡片
+     * 查询指定ID的知识库条目
+     *
+     * @param id 知识卡片ID
+     * @return 知识卡片响应对象，如果不存在返回null
+     */
     public KnowledgeResponse getKnowledgeById(Long id) {
         AiKnowledge knowledge = knowledgeMapper.selectById(id);
         if (knowledge == null) {
@@ -123,6 +137,12 @@ public class KnowledgeService {
         return response;
     }
 
+    /**
+     * 获取所有知识卡片
+     * 查询知识库中的所有条目
+     *
+     * @return 所有知识卡片的响应对象列表
+     */
     public List<KnowledgeResponse> getAllKnowledge() {
         List<AiKnowledge> knowledgeList = knowledgeMapper.selectAll();
         return knowledgeList.stream().map(knowledge -> {
@@ -132,6 +152,13 @@ public class KnowledgeService {
         }).toList();
     }
 
+    /**
+     * 根据技术标签获取知识卡片
+     * 查询包含指定技术标签的所有知识库条目
+     *
+     * @param tag 技术标签名称
+     * @return 匹配该标签的知识卡片响应对象列表
+     */
     public List<KnowledgeResponse> getKnowledgeByTechTag(String tag) {
         List<AiKnowledge> knowledgeList = knowledgeMapper.selectByTechTag(tag);
         return knowledgeList.stream().map(knowledge -> {
@@ -141,6 +168,13 @@ public class KnowledgeService {
         }).toList();
     }
 
+    /**
+     * 删除知识卡片
+     * 根据ID删除指定的知识库条目
+     *
+     * @param id 要删除的知识卡片ID
+     * @throws Exception 如果删除操作失败
+     */
     public void deleteKnowledge(Long id) throws Exception {
         logger.info("删除知识库，ID: {}", id);
         try {
@@ -155,6 +189,14 @@ public class KnowledgeService {
         }
     }
 
+    /**
+     * 构建知识提炼提示词
+     * 根据用户消息和助手回复构建AI知识提炼的prompt
+     *
+     * @param userContent 用户消息内容
+     * @param assistantContent 助手回复内容
+     * @return 构建好的提示词字符串
+     */
     private String buildPrompt(String userContent, String assistantContent) {
         return "请把下面的用户提问和AI回答，提炼为关键语句和代码片段，并添加适当的标记。\n\n" +
                 "【要求】\n\n" +
