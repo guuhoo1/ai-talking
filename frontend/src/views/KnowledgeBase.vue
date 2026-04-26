@@ -74,12 +74,9 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { Modal } from 'ant-design-vue'
 import { knowledgeApi } from '../api'
 import type { Knowledge } from '../types'
 
-const router = useRouter()
 const knowledgeList = ref<Knowledge[]>([])
 const isModalVisible = ref(false)
 const selectedKnowledge = ref<Knowledge | null>(null)
@@ -90,7 +87,7 @@ onMounted(async () => {
 
 const loadKnowledge = async () => {
   try {
-    const response = await knowledgeApi.getAllKnowledge()
+    const response = await knowledgeApi.getAllKnowledge() as any
     knowledgeList.value = response.data
   } catch (error) {
     console.error('加载知识库失败:', error)
@@ -142,96 +139,126 @@ const formatTime = (time: string) => {
 }
 
 .main-content {
-  padding: 32px;
+  padding: var(--spacing-xl);
   overflow-y: auto;
 }
 
 .main-content h1 {
-  margin: 0 0 32px 0;
-  font-size: 28px;
-  font-weight: 700;
+  margin: 0 0 var(--spacing-xl) 0;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
   color: var(--text-primary);
+  letter-spacing: -0.26px;
+  line-height: var(--line-height-relaxed);
 }
 
 .knowledge-cards {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
-  gap: 24px;
+  gap: var(--spacing-l-plus);
 }
 
 .knowledge-card {
   background: var(--card-color);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius-lg);
-  padding: 24px;
+  padding: var(--spacing-l-plus);
   box-shadow: var(--shadow-sm);
-  transition: all 0.3s ease;
+  transition: all var(--transition-normal);
 }
 
 .knowledge-card:hover {
   box-shadow: var(--shadow-md);
   transform: translateY(-4px);
+  border-color: var(--primary-color);
 }
 
 .knowledge-card h3 {
-  margin: 0 0 16px 0;
-  font-size: 18px;
-  font-weight: 600;
+  margin: 0 0 var(--spacing-m-plus) 0;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--text-primary);
-  line-height: 1.4;
+  line-height: var(--line-height-relaxed);
+  letter-spacing: -0.14px;
 }
 
 .tech-tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 16px;
+  gap: var(--spacing-s);
+  margin-bottom: var(--spacing-m-plus);
 }
 
 .tech-tag {
   padding: 4px 12px;
-  background: rgba(67, 97, 238, 0.1);
-  border: 1px solid rgba(67, 97, 238, 0.2);
-  border-radius: var(--border-radius-full);
-  font-size: 12px;
+  background: var(--glass-dark);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-pill);
+  font-size: var(--font-size-sm);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+  font-weight: var(--font-weight-normal);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  font-family: var(--font-mono);
+}
+
+.tech-tag:hover {
+  background: var(--sidebar-hover-bg);
+  border-color: var(--primary-color);
   color: var(--primary-color);
 }
 
 .summary {
-  margin: 0 0 20px 0;
-  font-size: 14px;
-  line-height: 1.5;
+  margin: 0 0 var(--spacing-l-plus) 0;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
   color: var(--text-secondary);
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  font-weight: var(--font-weight-light-medium);
+  letter-spacing: -0.14px;
 }
 
 .card-actions {
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-s);
 }
 
-.detail-btn, .copy-btn {
-  padding: 8px 16px;
+.detail-btn, .copy-btn, .delete-btn {
+  padding: 8px 18px 10px;
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  font-size: 14px;
+  border-radius: var(--border-radius-pill);
+  font-size: var(--font-size-base);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.14px;
+  font-family: var(--font-family);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .detail-btn {
   background: var(--primary-color);
-  color: white;
+  color: var(--text-light);
   border-color: var(--primary-color);
 }
 
 .detail-btn:hover {
-  background: var(--secondary-color);
-  border-color: var(--secondary-color);
+  background: var(--primary-hover);
+  border-color: var(--primary-hover);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.detail-btn:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+  box-shadow: none;
 }
 
 .copy-btn {
@@ -243,32 +270,41 @@ const formatTime = (time: string) => {
   border-color: var(--primary-color);
   color: var(--primary-color);
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.copy-btn:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+  box-shadow: none;
 }
 
 .delete-btn {
-  background: #ff4d4f;
-  color: white;
-  border: 1px solid #ff4d4f;
-  padding: 8px 16px;
-  border-radius: var(--border-radius-md);
-  font-size: 14px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+  background: var(--error-color);
+  color: var(--text-light);
+  border: 1px solid var(--error-color);
 }
 
 .delete-btn:hover {
   background: #ff7875;
   border-color: #ff7875;
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.delete-btn:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+  box-shadow: none;
 }
 
 /* 弹窗内容样式 */
 .knowledge-detail-content {
-  padding: 20px 0;
+  padding: var(--spacing-m-plus) 0;
 }
 
 .knowledge-detail-content .tech-tags {
-  margin-bottom: 20px;
+  margin-bottom: var(--spacing-l-plus);
 }
 
 .knowledge-detail-content .summary,
@@ -277,67 +313,190 @@ const formatTime = (time: string) => {
 .knowledge-detail-content .principle,
 .knowledge-detail-content .notes,
 .knowledge-detail-content .metadata {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-l-plus);
 }
 
 .knowledge-detail-content h3 {
-  margin: 0 0 12px 0;
-  font-size: 16px;
-  font-weight: 600;
+  margin: 0 0 var(--spacing-s) 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-bold);
   color: var(--text-primary);
+  letter-spacing: -0.14px;
+  line-height: var(--line-height-relaxed);
 }
 
 .knowledge-detail-content p {
   margin: 0;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
   color: var(--text-secondary);
+  font-weight: var(--font-weight-light-medium);
+  letter-spacing: -0.14px;
 }
 
 .knowledge-detail-content pre {
-  background: var(--bg-color);
+  background: var(--card-color);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  padding: 16px;
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  line-height: 1.5;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-m-plus);
+  margin: 0 0 var(--spacing-s) 0;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
   overflow-x: auto;
   max-height: 300px;
   overflow-y: auto;
+  font-family: var(--font-mono);
+  letter-spacing: normal;
 }
 
 .knowledge-detail-content .copy-btn {
-  margin-top: 8px;
+  margin-top: var(--spacing-s);
 }
 
 .knowledge-detail-content .metadata {
   display: flex;
   flex-wrap: wrap;
-  gap: 24px;
-  font-size: 14px;
+  gap: var(--spacing-l-plus);
+  font-size: var(--font-size-base);
   color: var(--text-secondary);
+  font-weight: var(--font-weight-light-medium);
+  letter-spacing: -0.14px;
+}
+
+/* 弹窗样式 */
+:deep(.ant-modal) {
+  background: var(--bg-color) !important;
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+:deep(.ant-modal-content) {
+  background: var(--card-color) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius-lg) !important;
+}
+
+:deep(.ant-modal-header) {
+  background: var(--card-color) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+}
+
+:deep(.ant-modal-title) {
+  color: var(--text-primary) !important;
+  font-weight: var(--font-weight-bold) !important;
+  font-size: var(--font-size-xl) !important;
+  letter-spacing: -0.14px !important;
+  line-height: var(--line-height-relaxed) !important;
+  font-family: var(--font-family) !important;
+}
+
+:deep(.ant-modal-body) {
+  background: var(--card-color) !important;
+  color: var(--text-primary) !important;
+}
+
+:deep(.ant-modal-footer) {
+  background: var(--card-color) !important;
+  border-top: 1px solid var(--border-color) !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: var(--spacing-s) !important;
+}
+
+:deep(.ant-btn) {
+  border-radius: var(--border-radius-pill) !important;
+  transition: all var(--transition-fast) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  padding: 8px 18px 10px !important;
+  letter-spacing: -0.14px !important;
+  font-family: var(--font-family) !important;
+  min-width: 80px !important;
+  text-align: center !important;
+}
+
+:deep(.ant-btn:focus) {
+  outline: var(--focus-outline) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: none !important;
+}
+
+:deep(.ant-btn-primary) {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--text-light) !important;
+}
+
+:deep(.ant-btn-primary:hover) {
+  background: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+:deep(.ant-btn-default) {
+  background: var(--bg-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+:deep(.ant-btn-default:hover) {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+/* 全局弹窗样式 */
+:global(.ant-modal-footer) {
+  background: var(--card-color) !important;
+  border-top: 1px solid var(--border-color) !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: var(--spacing-s) !important;
+}
+
+:global(.ant-btn) {
+  border-radius: var(--border-radius-pill) !important;
+  transition: all var(--transition-fast) !important;
+  font-weight: var(--font-weight-semibold) !important;
+  padding: 8px 18px 10px !important;
+  letter-spacing: -0.14px !important;
+  font-family: var(--font-family) !important;
+  min-width: 80px !important;
+  text-align: center !important;
+}
+
+:global(.ant-btn:focus) {
+  outline: var(--focus-outline) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: none !important;
+}
+
+:global(.ant-btn-primary) {
+  background: var(--primary-color) !important;
+  border-color: var(--primary-color) !important;
+  color: var(--text-light) !important;
+}
+
+:global(.ant-btn-primary:hover) {
+  background: var(--primary-hover) !important;
+  border-color: var(--primary-hover) !important;
+  box-shadow: var(--shadow-sm) !important;
+}
+
+:global(.ant-btn-default) {
+  background: var(--bg-color) !important;
+  border-color: var(--border-color) !important;
+  color: var(--text-primary) !important;
+}
+
+:global(.ant-btn-default:hover) {
+  border-color: var(--primary-color) !important;
+  color: var(--primary-color) !important;
+  box-shadow: var(--shadow-sm) !important;
 }
 
 @media (max-width: 768px) {
-  .knowledge-base-container {
-    flex-direction: column;
-  }
-  
-  .sidebar {
-    width: 100%;
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-    padding: 16px;
-  }
-  
-  .tag-filter {
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-  
   .main-content {
-    padding: 16px;
+    padding: var(--spacing-m-plus);
   }
   
   .knowledge-cards {
@@ -348,6 +507,15 @@ const formatTime = (time: string) => {
   :deep(.ant-modal) {
     width: 90% !important;
     max-width: 90% !important;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+  }
+  
+  .detail-btn, .copy-btn, .delete-btn {
+    width: 100%;
+    justify-content: center;
   }
 }
 </style>

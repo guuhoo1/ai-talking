@@ -55,11 +55,12 @@ import LoginForm from '../components/LoginForm.vue'
   min-height: 100vh;
   display: flex;
   overflow: hidden;
+  background: var(--bg-color);
 }
 
 .login-left {
   flex: 1;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+  background: linear-gradient(135deg, #000000 0%, #333333 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -72,42 +73,50 @@ import LoginForm from '../components/LoginForm.vue'
 }
 
 .left-title {
-  font-size: 36px;
-  font-weight: 700;
-  margin-bottom: 20px;
-  line-height: 1.2;
+  font-size: var(--font-size-5xl);
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--spacing-m);
+  line-height: var(--line-height-tight);
+  letter-spacing: -0.96px;
 }
 
 .left-description {
-  font-size: 18px;
-  margin-bottom: 40px;
-  line-height: 1.5;
+  font-size: var(--font-size-lg);
+  margin-bottom: var(--spacing-xl);
+  line-height: var(--line-height-relaxed);
+  font-weight: var(--font-weight-light-medium);
   opacity: 0.9;
 }
 
 .features {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-l);
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  gap: 16px;
-  font-size: 16px;
-  font-weight: 500;
+  gap: var(--spacing-m);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
 }
 
 .feature-icon {
   width: 40px;
   height: 40px;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(255, 255, 255, 0.16);
   border-radius: var(--border-radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: all var(--transition-fast);
+}
+
+.feature-item:hover .feature-icon {
+  transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .login-right {
@@ -117,55 +126,76 @@ import LoginForm from '../components/LoginForm.vue'
   align-items: center;
   justify-content: center;
   padding: 40px;
+  border-left: 1px solid var(--border-color);
 }
 
 .login-wrapper {
   width: 100%;
-  background: var(--bg-color);
+  background: var(--card-color);
   border-radius: var(--border-radius-lg);
-  box-shadow: none;
+  box-shadow: var(--shadow-lg);
   overflow: hidden;
-  border: none;
+  border: 1px solid var(--border-color);
+  animation: fadeIn var(--transition-normal);
 }
 
 .login-header {
-  background: var(--primary-color);
+  background: var(--card-color);
   padding: 40px;
   text-align: center;
-  color: white;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .logo {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-m);
 }
 
 .logo-icon {
   width: 80px;
   height: 80px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--primary-color);
   border-radius: var(--border-radius-full);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  margin-bottom: 16px;
+  margin-bottom: var(--spacing-m);
+  box-shadow: var(--shadow-md);
+  transition: all var(--transition-normal);
+}
+
+.logo-icon:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
 }
 
 .title {
-  color: white;
-  font-size: 28px;
-  font-weight: 700;
+  color: var(--text-primary);
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
   margin: 0;
 }
 
 .subtitle {
-  color: rgba(255, 255, 255, 0.9);
-  font-size: 16px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-base);
   margin: 0;
-  font-weight: 400;
+  font-weight: var(--font-weight-light-medium);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @media (max-width: 768px) {
@@ -176,19 +206,25 @@ import LoginForm from '../components/LoginForm.vue'
   .login-left {
     width: 100%;
     padding: 30px;
+    border-bottom: 1px solid var(--border-color);
   }
   
   .login-right {
     width: 100%;
     padding: 30px;
+    border-left: none;
   }
   
   .left-title {
-    font-size: 28px;
+    font-size: var(--font-size-4xl);
   }
   
   .left-description {
-    font-size: 16px;
+    font-size: var(--font-size-base);
+  }
+  
+  .login-wrapper {
+    box-shadow: var(--shadow-md);
   }
 }
 </style>

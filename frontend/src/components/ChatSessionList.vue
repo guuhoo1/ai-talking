@@ -30,11 +30,10 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { chatApi, authApi } from '../api'
 import { useUserStore, useChatStore } from '../store'
-import type { ChatSession } from '../types'
 
 const router = useRouter()
 const userStore = useUserStore()
@@ -49,16 +48,14 @@ const handleCreateSession = async () => {
     console.log('开始创建会话')
     const response = await chatApi.createSession('新会话')
     console.log('创建会话响应:', response)
-    if (response.code === 200) {
-      console.log('创建会话成功，会话数据:', response.data)
-      // 检查会话数据是否包含id字段
-      if (!response.data.id) {
-        console.log('会话数据缺少id字段，生成临时id')
-        response.data.id = Date.now()
-      }
-      chatStore.addSession(response.data)
-      console.log('添加会话后，currentSessionId:', chatStore.currentSessionId)
+    console.log('创建会话成功，会话数据:', response.data)
+    // 检查会话数据是否包含id字段
+    if (!response.data.id) {
+      console.log('会话数据缺少id字段，生成临时id')
+      response.data.id = Date.now()
     }
+    chatStore.addSession(response.data)
+    console.log('添加会话后，currentSessionId:', chatStore.currentSessionId)
   } catch (error) {
     console.error('创建会话失败:', error)
   }
@@ -69,23 +66,11 @@ const handleSelectSession = (sessionId: number) => {
   loadMessages(sessionId)
 }
 
-const handleDeleteSession = async (sessionId: number) => {
-  try {
-    const response = await chatApi.deleteSession(sessionId)
-    if (response.code === 200) {
-      chatStore.deleteSession(sessionId)
-    }
-  } catch (error) {
-    console.error('删除会话失败:', error)
-  }
-}
-
 const handleLogout = async () => {
   console.log('退出登录按钮被点击')
   try {
     console.log('调用authApi.logout()')
-    const response = await authApi.logout()
-    console.log('logout响应:', response)
+    await authApi.logout()
     console.log('调用userStore.logout()')
     userStore.logout()
     console.log('调用router.push(\'/login\')')
@@ -98,9 +83,7 @@ const handleLogout = async () => {
 const loadMessages = async (sessionId: number) => {
   try {
     const response = await chatApi.getMessages(sessionId)
-    if (response.code === 200) {
-      chatStore.setMessages(sessionId, response.data)
-    }
+    chatStore.setMessages(sessionId, response.data)
   } catch (error) {
     console.error('加载消息失败:', error)
   }
@@ -114,12 +97,10 @@ const formatTime = (time: string) => {
 onMounted(async () => {
   try {
     const response = await chatApi.getSessionList()
-    if (response.code === 200) {
-      chatStore.setSessions(response.data)
-      if (response.data.length > 0) {
-        chatStore.setCurrentSessionId(response.data[0].id)
-        loadMessages(response.data[0].id)
-      }
+    chatStore.setSessions(response.data)
+    if (response.data.length > 0) {
+      chatStore.setCurrentSessionId(response.data[0].id)
+      loadMessages(response.data[0].id)
     }
   } catch (error) {
     console.error('加载会话列表失败:', error)
@@ -131,67 +112,72 @@ onMounted(async () => {
 .session-list {
   width: 280px;
   height: 100vh;
-  background: var(--card-color);
+  background: var(--sidebar-bg);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-md);
   overflow: hidden;
 }
 
 .session-header {
-  padding: 20px 24px;
+  padding: var(--spacing-m) var(--spacing-m);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  background: var(--card-color);
+  gap: var(--spacing-s);
+  background: var(--sidebar-bg);
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .session-header h2 {
   margin: 0;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--text-primary);
+  letter-spacing: -0.14px;
 }
 
 .session-header .new-chat-btn {
   width: 100%;
-  padding: 12px 16px;
-  background: var(--primary-color);
-  border: 1px solid var(--primary-color);
-  border-radius: var(--border-radius-md);
-  color: white;
-  font-size: 14px;
-  font-weight: 600;
+  padding: 8px 18px 10px;
+  background: var(--card-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius-pill);
+  color: var(--text-primary);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  box-shadow: 0 2px 4px rgba(67, 97, 238, 0.2);
+  gap: var(--spacing-s);
 }
 
 .session-header .new-chat-btn:hover {
-  background: var(--secondary-color);
-  border-color: var(--secondary-color);
+  background: var(--sidebar-hover-bg);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(67, 97, 238, 0.3);
+  box-shadow: var(--shadow-sm);
 }
 
 .session-header .new-chat-btn:active {
   transform: translateY(0);
+  box-shadow: none;
+}
+
+.session-header .new-chat-btn:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
 }
 
 .session-items {
   flex: 1;
   overflow-y: auto;
-  padding: 16px;
+  padding: var(--spacing-m);
 }
 
 .session-items::-webkit-scrollbar {
@@ -199,13 +185,13 @@ onMounted(async () => {
 }
 
 .session-items::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--sidebar-bg);
 }
 
 .session-items::-webkit-scrollbar-thumb {
   background: var(--border-color);
-  border-radius: 3px;
-  transition: background 0.3s ease;
+  border-radius: var(--border-radius-full);
+  transition: background var(--transition-fast);
 }
 
 .session-items::-webkit-scrollbar-thumb:hover {
@@ -213,113 +199,127 @@ onMounted(async () => {
 }
 
 .session-item {
-  padding: 12px 16px;
-  margin-bottom: 8px;
-  background: var(--card-color);
-  border-radius: var(--border-radius-md);
+  padding: var(--spacing-s) var(--spacing-m);
+  margin-bottom: var(--spacing-xs);
+  background: var(--sidebar-bg);
+  border-radius: var(--border-radius-pill);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
   position: relative;
-  border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid transparent;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--spacing-xs);
 }
 
 .session-item:hover {
-  background: rgba(67, 97, 238, 0.05);
+  background: var(--sidebar-hover-bg);
   border-color: var(--primary-color);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
 }
 
 .session-item.active {
   background: var(--primary-color);
-  color: white;
+  color: var(--text-light);
   border-color: var(--primary-color);
-  box-shadow: 0 2px 6px rgba(67, 97, 238, 0.3);
   transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
 }
 
 .session-title {
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
   color: var(--text-primary);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  line-height: 1.4;
+  line-height: var(--line-height-relaxed);
 }
 
 .session-item.active .session-title {
-  color: white;
-  font-weight: 600;
+  color: var(--text-light);
+  font-weight: var(--font-weight-semibold);
 }
 
 .session-time {
-  font-size: 11px;
+  font-size: var(--font-size-xs);
   color: var(--text-muted);
-  font-weight: 400;
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
 .session-item.active .session-time {
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.7);
 }
 
 .user-info {
-  padding: 20px 24px;
+  padding: var(--spacing-m) var(--spacing-m);
   border-top: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  background: var(--card-color);
+  gap: var(--spacing-s);
+  background: var(--sidebar-bg);
   position: sticky;
   bottom: 0;
   z-index: 10;
-  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .user-info .user-details {
   width: 100%;
-  padding: 12px 16px;
-  background: var(--bg-color);
-  border-radius: var(--border-radius-md);
+  padding: var(--spacing-s) var(--spacing-m);
+  background: var(--card-color);
+  border-radius: var(--border-radius-pill);
   display: flex;
   justify-content: space-between;
   align-items: center;
   border: 1px solid var(--border-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: all var(--transition-fast);
+}
+
+.user-info .user-details:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .user-info .user-details span {
   color: var(--text-primary);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-medium);
 }
 
 .user-info .logout-btn {
   width: 100%;
-  padding: 12px 16px;
-  background: transparent;
+  padding: 8px 18px 10px;
+  background: var(--card-color);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-pill);
   color: var(--text-primary);
-  font-size: 14px;
-  font-weight: 500;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-s);
 }
 
 .user-info .logout-btn:hover {
-  background: var(--bg-color);
+  background: var(--sidebar-hover-bg);
   border-color: var(--primary-color);
   color: var(--primary-color);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
+}
+
+.user-info .logout-btn:active {
+  box-shadow: none;
+}
+
+.user-info .logout-btn:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
 }
 
 .user-info .logout-btn::before {
@@ -332,13 +332,5 @@ onMounted(async () => {
   background-position: center;
 }
 
-.session-header .new-chat-btn::before {
-  content: "";
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12 5V19' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M5 12H19' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: center;
-}
+/* 移除背景图片加号，只保留模板中的文本加号 */
 </style>

@@ -10,6 +10,26 @@ body {
   line-height: 1.5;
   color: var(--text-primary);
   background-color: var(--bg-color);
+  overflow-x: hidden;
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-color);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: var(--border-radius-full);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
 }
 
 /* 按钮样式 */
@@ -19,30 +39,148 @@ button {
   border: none;
   border-radius: var(--border-radius-md);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
+  font-weight: 500;
 }
 
 button:hover {
   opacity: 0.9;
   transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
 }
 
 button:active {
   transform: translateY(0);
 }
 
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
 /* 输入框样式 */
 input, textarea {
   font-family: inherit;
   font-size: 14px;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--input-border);
   border-radius: var(--border-radius-md);
   padding: var(--spacing-s) var(--spacing-m);
-  transition: border-color 0.3s ease;
+  transition: all var(--transition-fast);
+  background-color: var(--input-bg);
+  color: var(--text-primary);
 }
 
 input:focus, textarea:focus {
   outline: none;
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+/* 链接样式 */
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+  transition: color var(--transition-fast);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* 卡片样式 */
+.card {
+  background-color: var(--card-color);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  padding: var(--spacing-l);
+  transition: all var(--transition-normal);
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+/* 代码块样式 */
+pre {
+  background-color: var(--card-color);
+  border-radius: var(--border-radius-md);
+  padding: var(--spacing-m);
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  line-height: 1.4;
+  border: 1px solid var(--border-color);
+}
+
+code {
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 13px;
+  background-color: var(--card-color);
+  padding: 2px 6px;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+}
+
+/* 动画 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn var(--transition-normal);
+}
+
+/* 工具类 */
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.mt-1 {
+  margin-top: var(--spacing-s);
+}
+
+.mt-2 {
+  margin-top: var(--spacing-m);
+}
+
+.mt-3 {
+  margin-top: var(--spacing-l);
+}
+
+.mb-1 {
+  margin-bottom: var(--spacing-s);
+}
+
+.mb-2 {
+  margin-bottom: var(--spacing-m);
+}
+
+.mb-3 {
+  margin-bottom: var(--spacing-l);
+}
+
+.p-1 {
+  padding: var(--spacing-s);
+}
+
+.p-2 {
+  padding: var(--spacing-m);
+}
+
+.p-3 {
+  padding: var(--spacing-l);
 }

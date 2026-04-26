@@ -10,11 +10,6 @@
           <router-link to="/knowledge" class="knowledge-link">
             知识库
           </router-link>
-          <a-select v-model:value="selectedModel" class="model-select">
-            <a-option value="qwen2.5:3b">Qwen2.5:3b</a-option>
-            <a-option value="llama3">Llama3</a-option>
-            <a-option value="mistral">Mistral</a-option>
-          </a-select>
         </div>
       </div>
       <div class="chat-messages" ref="messagesContainer">
@@ -23,9 +18,13 @@
           <div v-if="isStreaming" class="message-container">
             <div class="message-avatar">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M21 15C21 15.5523 20.5523 16 20 16H19V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V16H4C3.44772 16 3 15.5523 3 15V9C3 8.44772 3.44772 8 4 8H5V5C5 3.89543 5.89543 3 7 3H17C18.1046 3 19 3.89543 19 5V8H20C20.5523 8 21 8.44772 21 9V15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M8 11H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M8 14H16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path
+                  d="M21 15C21 15.5523 20.5523 16 20 16H19V19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V16H4C3.44772 16 3 15.5523 3 15V9C3 8.44772 3.44772 8 4 8H5V5C5 3.89543 5.89543 3 7 3H17C18.1046 3 19 3.89543 19 5V8H20C20.5523 8 21 8.44772 21 9V15Z"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M8 11H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
+                <path d="M8 14H16" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round" />
               </svg>
             </div>
             <div class="message-content">
@@ -43,8 +42,10 @@
           <a-button type="primary" @click="handleSendMessage"
             :disabled="!inputMessage || !currentSessionId || isStreaming" class="send-button">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M22 2L11 13" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
+              <path d="M22 2L15 22L11 13L2 9L22 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round" />
             </svg>
             发送
           </a-button>
@@ -68,12 +69,12 @@ window.copyCode = (button: HTMLElement) => {
   const codeBlock = button.closest('.code-block') as HTMLElement
   const codeElement = codeBlock.querySelector('code') as HTMLElement
   const code = codeElement.textContent || ''
-  
+
   navigator.clipboard.writeText(code).then(() => {
     const originalText = button.textContent
     button.textContent = '已复制!'
     button.classList.add('copied')
-    
+
     setTimeout(() => {
       button.textContent = originalText
       button.classList.remove('copied')
@@ -86,7 +87,6 @@ window.copyCode = (button: HTMLElement) => {
 const chatStore = useChatStore()
 const messagesContainer = ref<HTMLElement>()
 const inputMessage = ref('')
-const selectedModel = ref('qwen2.5:3b')
 let eventSource: EventSource | null = null
 
 const currentSessionId = computed(() => chatStore.currentSessionId)
@@ -141,12 +141,12 @@ const handleSendMessage = () => {
   console.log('开始流式响应')
 
   // 调用API
-  console.log('调用API，模型:', selectedModel.value)
+  console.log('调用API，模型: qwen2.5:3b')
   try {
     eventSource = chatApi.sendMessage({
       sessionId: currentSessionId.value,
       content: message,
-      model: selectedModel.value
+      model: 'qwen2.5:3b'
     })
     console.log('EventSource创建成功')
 
@@ -221,13 +221,12 @@ onMounted(() => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: var(--card-color);
-  box-shadow: var(--shadow-md);
+  background: var(--bg-color);
   border-left: 1px solid var(--border-color);
 }
 
 .chat-header {
-  padding: 16px 24px;
+  padding: var(--spacing-m) var(--spacing-l);
   border-bottom: 1px solid var(--border-color);
   display: flex;
   justify-content: space-between;
@@ -236,55 +235,61 @@ onMounted(() => {
   position: sticky;
   top: 0;
   z-index: 10;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--shadow-sm);
 }
 
 .header-left h2 {
   margin: 0;
-  font-size: 20px;
-  font-weight: 600;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
   color: var(--text-primary);
+  letter-spacing: -0.14px;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-m);
 }
 
 .knowledge-link {
-  padding: 8px 16px;
-  background: var(--bg-color);
+  padding: 8px 18px 10px;
+  background: var(--card-color);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-pill);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   text-decoration: none;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
+  font-weight: var(--font-weight-medium);
 }
 
 .knowledge-link:hover {
   border-color: var(--primary-color);
   color: var(--primary-color);
-  background: rgba(67, 97, 238, 0.05);
+  background: rgba(0, 0, 0, 0.05);
+}
+
+.knowledge-link:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
 }
 
 .model-select {
   width: 140px;
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--border-color);
-  font-size: 14px;
+  border-radius: var(--border-radius-pill);
+  font-size: var(--font-size-base);
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 24px;
-  background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+  padding: var(--spacing-l);
+  background: var(--bg-color);
 }
 
 .messages-wrapper {
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -293,13 +298,13 @@ onMounted(() => {
 }
 
 .chat-messages::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-color);
 }
 
 .chat-messages::-webkit-scrollbar-thumb {
   background: var(--border-color);
-  border-radius: 4px;
-  transition: background 0.3s ease;
+  border-radius: var(--border-radius-full);
+  transition: background var(--transition-fast);
 }
 
 .chat-messages::-webkit-scrollbar-thumb:hover {
@@ -307,37 +312,36 @@ onMounted(() => {
 }
 
 .chat-input {
-  padding: 20px 24px;
+  padding: var(--spacing-m) var(--spacing-l);
   border-top: 1px solid var(--border-color);
-  background: var(--card-color);
+  background: var(--bg-color);
   position: sticky;
   bottom: 0;
   z-index: 10;
-  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .input-wrapper {
-  max-width: 1000px;
+  max-width: 800px;
   margin: 0 auto;
   display: flex;
-  gap: 12px;
+  gap: var(--spacing-s);
   align-items: flex-end;
 }
 
 .message-input {
   flex: 1;
   resize: none;
-  min-height: 80px;
+  min-height: 44px;
   max-height: 200px;
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  padding: 16px;
-  font-size: 14px;
-  line-height: 1.5;
-  transition: all 0.3s ease;
+  border: 1px solid var(--input-border);
+  border-radius: var(--border-radius-pill);
+  padding: 10px 16px;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-relaxed);
+  transition: all var(--transition-fast);
   background: var(--card-color);
   color: var(--text-primary);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  font-weight: var(--font-weight-light-medium);
 }
 
 .message-input::placeholder {
@@ -345,32 +349,34 @@ onMounted(() => {
 }
 
 .message-input:focus {
-  outline: none;
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  box-shadow: none;
 }
 
 .send-button {
-  padding: 12px 24px;
+  padding: 10px 20px;
   background: var(--primary-color);
-  color: white;
+  color: var(--text-light);
   border: none;
-  border-radius: var(--border-radius-md);
-  font-size: 14px;
-  font-weight: 600;
+  border-radius: var(--border-radius-pill);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
   display: flex;
   align-items: center;
-  gap: 8px;
-  min-height: 48px;
+  gap: var(--spacing-s);
+  min-height: 44px;
   white-space: nowrap;
+  padding: 8px 18px 10px;
 }
 
 .send-button:hover {
-  background: var(--secondary-color);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 .send-button:active {
@@ -384,9 +390,20 @@ onMounted(() => {
   box-shadow: none;
 }
 
+.send-button:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}
+
 :deep(.ant-select-selector) {
-  border-radius: var(--border-radius-md) !important;
+  border-radius: var(--border-radius-pill) !important;
   border: 1px solid var(--border-color) !important;
+  background: var(--input-bg) !important;
+}
+
+:deep(.ant-select-selection-item) {
+  color: var(--text-primary) !important;
+  font-weight: var(--font-weight-light-medium);
 }
 
 :deep(.ant-select-selector:hover) {
@@ -395,87 +412,123 @@ onMounted(() => {
 
 :deep(.ant-select-open .ant-select-selector) {
   border-color: var(--primary-color) !important;
-  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.1) !important;
+  outline: var(--focus-outline) !important;
+  outline-offset: var(--focus-offset) !important;
+  box-shadow: none !important;
+}
+
+:deep(.ant-select-dropdown) {
+  background: var(--card-color) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius-lg) !important;
+  box-shadow: var(--shadow-md) !important;
+}
+
+:deep(.ant-select-item) {
+  color: var(--text-primary) !important;
+  transition: background var(--transition-fast) !important;
+  font-weight: var(--font-weight-light-medium);
+}
+
+:deep(.ant-select-item:hover) {
+  background: var(--sidebar-hover-bg) !important;
+}
+
+:deep(.ant-select-item-selected) {
+  background: var(--primary-color) !important;
+  color: var(--text-light) !important;
 }
 
 /* 代码块样式 */
 :deep(.code-block) {
-  margin: 16px 0;
-  border-radius: var(--border-radius-md);
+  margin: var(--spacing-m) 0;
+  border-radius: var(--border-radius-lg);
   overflow: hidden;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  background-color: #f6f8fa;
-  border: 1px solid #e1e4e8;
+  box-shadow: var(--shadow-sm);
+  background-color: var(--card-color);
+  border: 1px solid var(--border-color);
 }
 
 :deep(.code-header) {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
-  background-color: #f1f3f4;
-  border-bottom: 1px solid #e1e4e8;
-  font-size: 12px;
+  padding: var(--spacing-s) var(--spacing-m);
+  background-color: var(--bg-light);
+  border-bottom: 1px solid var(--border-color);
+  font-size: var(--font-size-sm);
 }
 
 :deep(.code-language) {
-  color: #57606a;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: var(--text-secondary);
+  font-family: var(--font-mono);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
 }
 
 :deep(.copy-button) {
   background: none;
   border: none;
-  color: #57606a;
-  font-size: 12px;
+  color: var(--text-secondary);
+  font-size: var(--font-size-sm);
   cursor: pointer;
   padding: 4px 8px;
   border-radius: var(--border-radius-sm);
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
+  font-weight: var(--font-weight-medium);
 }
 
 :deep(.copy-button:hover) {
-  background-color: rgba(175, 184, 193, 0.2);
-  color: #0969da;
+  background-color: var(--sidebar-hover-bg);
+  color: var(--primary-color);
+}
+
+:deep(.copy-button:focus) {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
 }
 
 :deep(.copy-button.copied) {
-  color: #1f883d;
+  color: var(--success-color);
 }
 
 :deep(.code-block pre) {
   margin: 0;
-  padding: 16px;
+  padding: var(--spacing-m);
   overflow-x: auto;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 14px;
-  line-height: 1.5;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-normal);
+  background-color: var(--card-color);
+  border: none;
 }
 
 :deep(.code-block code) {
   background: none;
   padding: 0;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-  font-size: 14px;
+  font-family: var(--font-mono);
+  font-size: var(--font-size-base);
+  color: var(--text-primary);
 }
 
 /* 语法高亮样式 */
 :deep(.keyword) {
-  color: #d73a49;
-  font-weight: 600;
+  color: #f97316;
+  font-weight: var(--font-weight-semibold);
 }
 
 :deep(.string) {
-  color: #032f62;
+  color: #10b981;
 }
 
 :deep(.comment) {
-  color: #6a737d;
+  color: var(--text-muted);
   font-style: italic;
 }
 
 :deep(.number) {
-  color: #005cc5;
+  color: var(--primary-color);
 }
 
 /* 单行代码样式 */
@@ -484,11 +537,17 @@ onMounted(() => {
 }
 
 :deep(code) {
-  background-color: #f1f3f4;
+  background-color: var(--card-color);
   padding: 2px 4px;
-  border-radius: 3px;
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+  border-radius: var(--border-radius-sm);
+  font-family: var(--font-mono);
   font-size: 0.9em;
-  color: #005cc5;
+  color: var(--primary-color);
+  border: 1px solid var(--border-color);
+}
+
+/* 消息动画 */
+.fade-in {
+  animation: fadeIn var(--transition-normal);
 }
 </style>

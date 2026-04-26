@@ -39,15 +39,13 @@ const formState = ref<LoginRequest>({ username: '', password: '' })
 
 const handleSubmit = async () => {
   try {
-    const response = await authApi.login(formState.value)
-    if (response.code === 200) {
-      userStore.setUser({
-        id: response.data.id,
-        username: response.data.username,
-        token: response.token
-      })
-      router.push('/chat')
-    }
+    const response = await authApi.login(formState.value) as any
+    userStore.setUser({
+      id: response.id,
+      username: response.username,
+      token: response.token
+    })
+    router.push('/chat')
   } catch (error) {
     console.error('登录失败:', error)
   }
@@ -57,62 +55,58 @@ const handleSubmit = async () => {
 <style scoped>
 .login-form {
   padding: 40px;
-  background: var(--bg-color);
+  background: var(--card-color);
   border-radius: var(--border-radius-lg);
-  box-shadow: none;
-  border: none;
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-color);
+  animation: fadeIn var(--transition-normal);
 }
 
 .form-title {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: var(--font-size-3xl);
+  font-weight: var(--font-weight-bold);
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-s);
   text-align: center;
+  letter-spacing: -0.26px;
 }
 
 .form-subtitle {
-  font-size: 14px;
+  font-size: var(--font-size-base);
   color: var(--text-secondary);
-  margin-bottom: 32px;
+  margin-bottom: var(--spacing-xl);
   text-align: center;
-}
-
-.form-input {
-  width: 100%;
-  height: 48px;
-  font-size: 16px;
-  border-radius: var(--border-radius-md);
-  border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
-}
-
-.form-input:focus {
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  font-weight: var(--font-weight-light-medium);
 }
 
 .login-button {
   width: 100%;
   height: 48px;
-  font-size: 16px;
-  font-weight: 600;
-  border-radius: var(--border-radius-md);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-pill);
   background-color: var(--primary-color);
   border-color: var(--primary-color);
-  transition: all 0.3s ease;
-  margin-bottom: 24px;
+  color: var(--text-light);
+  transition: all var(--transition-fast);
+  margin-bottom: var(--spacing-l);
+  padding: 8px 18px 10px;
 }
 
 .login-button:hover {
-  background-color: var(--secondary-color);
-  border-color: var(--secondary-color);
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(67, 97, 238, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 .login-button:active {
   transform: translateY(0);
+}
+
+.login-button:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
 }
 
 .form-footer {
@@ -121,57 +115,83 @@ const handleSubmit = async () => {
 
 .register-link {
   color: var(--primary-color);
-  font-size: 14px;
+  font-size: var(--font-size-base);
   text-decoration: none;
-  transition: color 0.3s ease;
+  transition: color var(--transition-fast);
 }
 
 .register-link:hover {
-  color: var(--secondary-color);
+  color: var(--primary-hover);
   text-decoration: underline;
 }
 
+.register-link:focus {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+}
+
 :deep(.ant-form-item) {
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-l);
 }
 
 :deep(.ant-form-item-label > label) {
-  font-weight: 600;
+  font-weight: var(--font-weight-medium);
   color: var(--text-primary);
-  font-size: 14px;
-  margin-bottom: 8px;
+  font-size: var(--font-size-base);
+  margin-bottom: var(--spacing-s);
   display: block;
   text-align: left;
+  letter-spacing: -0.14px;
 }
 
 :deep(.ant-input) {
   border-color: var(--border-color);
   border-radius: var(--border-radius-md);
   height: 48px;
-  font-size: 16px;
+  font-size: var(--font-size-base);
+  background: var(--input-bg);
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
 }
 
 :deep(.ant-input:focus) {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+  box-shadow: none;
+}
+
+:deep(.ant-input::placeholder) {
+  color: var(--text-muted);
 }
 
 :deep(.ant-btn-primary) {
   background-color: var(--primary-color);
   border-color: var(--primary-color);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-pill);
   height: 48px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-light);
+  transition: all var(--transition-fast);
+  padding: 8px 18px 10px;
 }
 
 :deep(.ant-btn-primary:hover) {
-  background-color: var(--secondary-color);
-  border-color: var(--secondary-color);
+  background-color: var(--primary-hover);
+  border-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
 }
 
 :deep(.ant-btn) {
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-pill);
+}
+
+:deep(.ant-btn:focus) {
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+  box-shadow: none;
 }
 
 :deep(.ant-input-password) {
@@ -179,20 +199,44 @@ const handleSubmit = async () => {
   height: 48px;
   border-radius: var(--border-radius-md);
   border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
+  transition: all var(--transition-fast);
+  background: var(--input-bg);
+  display: flex;
+  align-items: center;
 }
 
 :deep(.ant-input-password .ant-input) {
   width: 100%;
+  height: 100%;
+  background: var(--input-bg);
+  color: var(--text-primary);
+  border: none;
+  border-radius: var(--border-radius-md);
+  padding: 0 16px;
 }
 
-/* :deep(.ant-input-password input) {
-  height: 48px;
-  font-size: 16px;
-} */
-
-/* :deep(.ant-input-password:focus-within) {
+:deep(.ant-input-password:focus-within) {
   border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
-} */
+  outline: var(--focus-outline);
+  outline-offset: var(--focus-offset);
+  box-shadow: none;
+}
+
+:deep(.ant-input-password .ant-input-suffix) {
+  margin-right: 12px;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 </style>

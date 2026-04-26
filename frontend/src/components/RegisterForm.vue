@@ -37,10 +37,8 @@ const formState = ref<RegisterRequest>({ username: '', password: '' })
 
 const handleSubmit = async () => {
   try {
-    const response = await authApi.register(formState.value)
-    if (response.code === 200) {
-      router.push('/login')
-    }
+    await authApi.register(formState.value)
+    router.push('/login')
   } catch (error) {
     console.error('注册失败:', error)
   }
