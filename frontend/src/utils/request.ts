@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { message } from 'ant-design-vue'
 
 const request = axios.create({
   baseURL: '/api',
@@ -29,8 +30,11 @@ request.interceptors.response.use(
       if (res.code === 401) {
         localStorage.removeItem('token')
         window.location.href = '/login'
+      } else {
+        // 其他错误，显示错误消息
+        message.error(res.message || '操作失败')
       }
-      // 其他错误，返回Promise.reject
+      // 返回Promise.reject
       return Promise.reject(new Error(res.message || 'Error'))
     }
     return res.data
@@ -39,6 +43,9 @@ request.interceptors.response.use(
     if (error.response && error.response.status === 401) {
       localStorage.removeItem('token')
       window.location.href = '/login'
+    } else {
+      // 网络错误或其他错误，显示错误消息
+      message.error('网络错误，请稍后重试')
     }
     return Promise.reject(error)
   }

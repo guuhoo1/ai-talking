@@ -2,6 +2,7 @@ package com.aitalking.service;
 
 import com.aitalking.dto.LoginRequest;
 import com.aitalking.dto.RegisterRequest;
+import com.aitalking.exception.BizException;
 import com.aitalking.mapper.UserMapper;
 import com.aitalking.model.User;
 import cn.dev33.satoken.stp.StpUtil;
@@ -32,7 +33,7 @@ public class AuthServiceImpl implements AuthService {
     public User register(RegisterRequest request) {
         // 检查用户名是否已存在
         if (userMapper.selectByUsername(request.getUsername()) != null) {
-            throw new RuntimeException("用户名已存在");
+            throw new BizException("用户名已存在");
         }
 
         // 密码加密
@@ -60,13 +61,13 @@ public class AuthServiceImpl implements AuthService {
         // 查找用户
         User user = userMapper.selectByUsername(request.getUsername());
         if (user == null) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new BizException("用户名或密码错误");
         }
 
         // 验证密码
         String encryptedPassword = DigestUtils.md5DigestAsHex(request.getPassword().getBytes());
         if (!user.getPassword().equals(encryptedPassword)) {
-            throw new RuntimeException("用户名或密码错误");
+            throw new BizException("用户名或密码错误");
         }
 
         // 登录

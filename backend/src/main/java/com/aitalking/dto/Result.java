@@ -1,5 +1,9 @@
 package com.aitalking.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
  * 通用结果封装类，用于统一API返回值格式。
  * 采用泛型设计，可封装任意类型的数据。
@@ -7,6 +11,7 @@ package com.aitalking.dto;
  * @author AI Talking
  * @date 2026-04-26
  */
+@Data
 public class Result<T> {
     /**
      * 状态码，200表示成功，其他值表示错误
