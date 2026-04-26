@@ -33,9 +33,8 @@ public interface ChatSessionMapper {
      * 同时验证会话归属，防止跨用户删除
      *
      * @param id 会话ID
-     * @param userId 用户ID
      */
-    void deleteById(@Param("id") Long id, @Param("userId") Long userId);
+    void deleteById(@Param("id") Long id);
 
     /**
      * 根据会话ID查询聊天会话
