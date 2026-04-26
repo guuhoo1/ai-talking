@@ -2,6 +2,7 @@ package com.aitalking.controller;
 
 import com.aitalking.dto.LoginRequest;
 import com.aitalking.dto.RegisterRequest;
+import com.aitalking.dto.Result;
 import com.aitalking.model.User;
 import com.aitalking.service.AuthService;
 import cn.dev33.satoken.stp.StpUtil;
@@ -22,32 +23,23 @@ public class AuthController {
     private AuthService authService;
 
     @PostMapping("/register")
-    public Map<String, Object> register(@RequestBody RegisterRequest request) {
+    public Result<User> register(@RequestBody RegisterRequest request) {
         User user = authService.register(request);
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "注册成功");
-        result.put("data", user);
-        return result;
+        return Result.success(user);
     }
 
     @PostMapping("/login")
-    public Map<String, Object> login(@RequestBody LoginRequest request) {
+    public Result<Map<String, Object>> login(@RequestBody LoginRequest request) {
         User user = authService.login(request);
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "登录成功");
-        result.put("data", user);
-        result.put("token", StpUtil.getTokenValue());
-        return result;
+        Map<String, Object> data = new HashMap<>();
+        data.put("user", user);
+        data.put("token", StpUtil.getTokenValue());
+        return Result.success(data);
     }
 
     @PostMapping("/logout")
-    public Map<String, Object> logout() {
+    public Result<Void> logout() {
         authService.logout();
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "登出成功");
-        return result;
+        return Result.success(null);
     }
 }

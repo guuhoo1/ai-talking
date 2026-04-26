@@ -1,5 +1,6 @@
 package com.aitalking.controller;
 
+import com.aitalking.dto.Result;
 import com.aitalking.model.ChatSession;
 import com.aitalking.model.ChatMessage;
 import com.aitalking.service.ChatService;
@@ -11,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -25,40 +25,25 @@ public class ChatController {
     private OllamaService ollamaService;
 
     @GetMapping("/session/list")
-    public Map<String, Object> getSessionList() {
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "获取会话列表成功");
-        result.put("data", chatService.getSessionList());
-        return result;
+    public Result<List<ChatSession>> getSessionList() {
+        return Result.success(chatService.getSessionList());
     }
 
     @PostMapping("/session/create")
-    public Map<String, Object> createSession(@RequestBody Map<String, String> request) {
+    public Result<ChatSession> createSession(@RequestBody java.util.Map<String, String> request) {
         ChatSession session = chatService.createSession(request.get("title"));
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "创建会话成功");
-        result.put("data", session);
-        return result;
+        return Result.success(session);
     }
 
     @DeleteMapping("/session/{id}")
-    public Map<String, Object> deleteSession(@PathVariable Long id) {
+    public Result<Void> deleteSession(@PathVariable Long id) {
         chatService.deleteSession(id);
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "删除会话成功");
-        return result;
+        return Result.success(null);
     }
 
     @GetMapping("/message/{sessionId}")
-    public Map<String, Object> getMessages(@PathVariable Long sessionId) {
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("message", "获取消息列表成功");
-        result.put("data", chatService.getMessages(sessionId));
-        return result;
+    public Result<List<ChatMessage>> getMessages(@PathVariable Long sessionId) {
+        return Result.success(chatService.getMessages(sessionId));
     }
 
     @GetMapping(value = "/send", produces = MediaType.TEXT_EVENT_STREAM_VALUE)

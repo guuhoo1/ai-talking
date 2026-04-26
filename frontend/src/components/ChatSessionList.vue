@@ -46,15 +46,15 @@ const username = computed(() => userStore.username || '')
 const handleCreateSession = async () => {
   try {
     console.log('开始创建会话')
-    const response = await chatApi.createSession('新会话')
+    const response = await chatApi.createSession('新会话') as any
     console.log('创建会话响应:', response)
-    console.log('创建会话成功，会话数据:', response.data)
+    console.log('创建会话成功，会话数据:', response)
     // 检查会话数据是否包含id字段
-    if (!response.data.id) {
+    if (!response.id) {
       console.log('会话数据缺少id字段，生成临时id')
-      response.data.id = Date.now()
+      response.id = Date.now()
     }
-    chatStore.addSession(response.data)
+    chatStore.addSession(response)
     console.log('添加会话后，currentSessionId:', chatStore.currentSessionId)
   } catch (error) {
     console.error('创建会话失败:', error)
@@ -82,8 +82,8 @@ const handleLogout = async () => {
 
 const loadMessages = async (sessionId: number) => {
   try {
-    const response = await chatApi.getMessages(sessionId)
-    chatStore.setMessages(sessionId, response.data)
+    const response = await chatApi.getMessages(sessionId) as any
+    chatStore.setMessages(sessionId, response)
   } catch (error) {
     console.error('加载消息失败:', error)
   }
@@ -96,11 +96,11 @@ const formatTime = (time: string) => {
 
 onMounted(async () => {
   try {
-    const response = await chatApi.getSessionList()
-    chatStore.setSessions(response.data)
-    if (response.data.length > 0) {
-      chatStore.setCurrentSessionId(response.data[0].id)
-      loadMessages(response.data[0].id)
+    const response = await chatApi.getSessionList() as any
+    chatStore.setSessions(response)
+    if (response.length > 0) {
+      chatStore.setCurrentSessionId(response[0].id)
+      loadMessages(response[0].id)
     }
   } catch (error) {
     console.error('加载会话列表失败:', error)

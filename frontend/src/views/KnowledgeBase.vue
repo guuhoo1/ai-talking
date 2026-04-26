@@ -88,7 +88,7 @@ onMounted(async () => {
 const loadKnowledge = async () => {
   try {
     const response = await knowledgeApi.getAllKnowledge() as any
-    knowledgeList.value = response.data
+    knowledgeList.value = response
   } catch (error) {
     console.error('加载知识库失败:', error)
   }
